@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const app = express();
@@ -38,6 +38,8 @@ async function run() {
   try {
     await client.connect();
     const toolsCollection = client.db("totalTools").collection("tools");
+    const usersCollection = client.db("totalTools").collection("users");
+    const ordersCollection = client.db("totalTools").collection("orders");
 
     app.get("/tools", async (req, res) => {
       const query = {};
@@ -45,6 +47,42 @@ async function run() {
       const tools = await cursor.toArray();
       res.send(tools);
     });
+
+    app.get('/tools/:id', async (req, res) =>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await toolsCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.post('/orders', async(req, res) =>{
+      const newOrder = req.body;
+      const result = await ordersCollection.insertOne(newOrder);
+      res.send(result);
+    })
+
+
+    app.put("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await usersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      const token = jwt.sign(
+        { email: email },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
+      res.send({ result, token });
+    });
+
   } finally {
   }
 }

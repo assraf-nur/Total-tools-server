@@ -40,8 +40,10 @@ async function run() {
     const toolsCollection = client.db("totalTools").collection("tools");
     const usersCollection = client.db("totalTools").collection("users");
     const ordersCollection = client.db("totalTools").collection("orders");
+    const reviewsCollection = client.db("totalTools").collection("reviews");
+    const wishCollection = client.db("totalTools").collection("wish");
 
-    app.get("/tools", verifyJWT, async (req, res) => {
+    app.get("/tools", async (req, res) => {
       const query = {};
       const cursor = toolsCollection.find(query);
       const tools = await cursor.toArray();
@@ -60,6 +62,27 @@ async function run() {
       const result = await ordersCollection.insertOne(newOrder);
       res.send(result);
     });
+
+    // reviews
+    app.post('/reviews', async (req,res) =>{
+      const newReview = req.body;
+      const result = await reviewsCollection.insertOne(newReview);
+      res.send(result);
+    });
+
+    app.get('/reviews', async (req, res) =>{
+      const query = {};
+      const cursor = reviewsCollection.find(query);
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+    // wishlist
+    app.post('/wish', async (req, res) => {
+      const newWish = req.body;
+      const result = await wishCollection.insertOne(newWish);
+      res.send(result);
+    })
 
     app.get("/orders", async (req, res) => {
       const userEmail = req.query.userEmail;

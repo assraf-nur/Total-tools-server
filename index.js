@@ -84,6 +84,13 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/wishes', async (req, res) =>{
+      const query = {};
+      const cursor = wishCollection.find(query);
+      const wishes = await cursor.toArray();
+      res.send(wishes);
+    });
+
     app.get("/orders", async (req, res) => {
       const userEmail = req.query.userEmail;
       const query = { userEmail: userEmail };

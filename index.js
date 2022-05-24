@@ -91,6 +91,12 @@ async function run() {
       res.send(wishes);
     });
 
+    app.post('/tools', async(req, res) => {
+      const newTools = req.body;
+      const result = await toolsCollection.insertOne(newTools);
+      res.send(result);
+    })
+
     app.get("/orders", async (req, res) => {
       const userEmail = req.query.userEmail;
       const query = { userEmail: userEmail };
@@ -109,6 +115,15 @@ async function run() {
         const result = await usersCollection.deleteOne(query);
         res.send(result);
     })
+
+    app.delete('/tools/:id', async (req, res) =>{
+        const id = req.params.id;
+        const query = {_id: ObjectId(id)};
+        const result = await toolsCollection.deleteOne(query);
+        res.send(result);
+    })
+
+    
 
     app.get('/admin/:email', async (req, res) =>{
       const email = req.params.email;

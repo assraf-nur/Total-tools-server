@@ -103,6 +103,11 @@ async function run() {
       const singleOrders = await ordersCollection.find(query).toArray();
       res.send(singleOrders);
     });
+    app.get("/allOrders", async (req, res) => {
+      const query = { };
+      const result = await ordersCollection.find(query).toArray();
+      res.send(result);
+    });
 
     app.get("/users", async (req, res) => {
       const users = await usersCollection.find().toArray();

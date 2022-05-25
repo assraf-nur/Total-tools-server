@@ -97,6 +97,14 @@ async function run() {
       res.send(result);
     })
 
+    // payment purpose
+    app.get('/orders/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)}
+      const order = await ordersCollection.findOne(query);
+      res.send(order);
+    })
+
     app.get("/orders", async (req, res) => {
       const userEmail = req.query.userEmail;
       const query = { userEmail: userEmail };
